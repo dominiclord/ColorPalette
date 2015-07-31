@@ -25,9 +25,11 @@ class ColorPalette
 
         // Default options
         $this->options = [
-            'avoid_proximity' => true,
-            'return_format'   => 'hex',
-            'variance'        => 25
+            'avoid_proximity'     => true,
+            'proximity_history'   => 5,
+            'proximity_tolerance' => 10,
+            'return_format'       => 'hex',
+            'variance'            => 50
         ];
 
         if (is_array($options) && !empty($options)) {
@@ -91,7 +93,7 @@ class ColorPalette
 
     /**
     * Proximity needs to be checked, refers to catalogue for validation.
-    * A variance of 50 is best for this feature.
+    * A variance of 50 is good for this feature.
     * @param    array     $rgb RGB values
     * @return   booleam
     */
@@ -100,8 +102,7 @@ class ColorPalette
         $proximity = false;
 
         // We only check the most recently generated colors as a catalogue could get quite large
-        // @TODO Add history count to options
-        $colors_to_check = array_slice($this->catalogue, -5);
+        $colors_to_check = array_slice($this->catalogue, $this->options['proximity_history']);
 
         $r = $rgb[0];
         $g = $rgb[1];
@@ -110,8 +111,7 @@ class ColorPalette
         foreach ($colors_to_check as $color) {
             // We can validate with $r on its own since all channels were modified with the same variance
             // Colors will be much closer the lower you go
-            // @TODO Add proximity tolerance to options
-            if (abs( $r - $color[0]) < 10) {
+            if (abs( $r - $color[0]) < $this->options['proximity_tolerance'] ) {
                 $proximity = true;
             }
         }
