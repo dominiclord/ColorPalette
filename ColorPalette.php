@@ -7,13 +7,13 @@
 */
 class ColorPalette
 {
-    protected $base_r;
-    protected $base_g;
-    protected $base_b;
+    private $base_r;
+    private $base_g;
+    private $base_b;
 
-    protected $catalogue = [];
-    protected $modifier;
-    protected $options;
+    private $catalogue = [];
+    private $modifier;
+    private $options;
 
     /**
     * Stock the base color and options
@@ -25,11 +25,12 @@ class ColorPalette
 
         // Default options
         $this->options = [
-            'avoid_proximity'     => true,
-            'proximity_history'   => 5,
-            'proximity_tolerance' => 10,
-            'return_format'       => 'hex',
-            'variance'            => 50
+            'avoid_proximity'      => true,
+            'proximity_history'    => 2,
+            'proximity_max_checks' => 20,
+            'proximity_tolerance'  => 10,
+            'return_format'        => 'hex',
+            'variance'             => 50
         ];
 
         if (is_array($options) && !empty($options)) {
@@ -152,10 +153,10 @@ class ColorPalette
             // Reset modifier
             $this->modifier = 0;
 
-            $counter = 0;
-            $safety = 20;
+            $counter    = 0;
+            $max_checks = $this->options['proximity_max_checks'];
 
-            while ($safety > $counter) {
+            while ($max_checks > $counter) {
 
                 $rgb = $this->generate_colors();
 
