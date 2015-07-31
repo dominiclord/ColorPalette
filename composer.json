@@ -1,0 +1,19 @@
+{
+    "name": "dominiclord/colorpalette",
+    "description": "Generate a randomized color palette",
+    "homepage": "https://github.com/dominiclord/colorpalette",
+    "type": "class",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Dominic Lord",
+            "email": "dlord@outlook.com",
+            "homepage": "http://dominiclord.com"
+        }
+    ],
+    "autoload": {
+        "files": [
+            "ColorPalette.php"
+        ]
+    }
+}
