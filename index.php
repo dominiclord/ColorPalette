@@ -22,7 +22,7 @@ require_once 'ColorPalette.php';
         <ul class="color-list">
 <?php
 
-$color_generator = new ColorPalette('#cc44ff');
+$color_generator = new ColorPalette('#aa1100');
 
 for ( $i = 0; $i < 10; $i++) {
 

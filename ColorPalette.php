@@ -15,6 +15,15 @@ class ColorPalette
     private $modifier;
     private $options;
 
+    public $profiler = [
+        'difference'        => 0,
+        'difference_checks' => 0,
+        'proximity_checks'  => 0,
+        'proximity_value'   => 0,
+        'modifier_value'    => 0,
+        'variance_value'    => 0
+    ];
+
     /**
     * Stock the base color and options
     * @param   mixed   $color     Base color can be a string (hex) or an array (rgb)
@@ -109,13 +118,21 @@ class ColorPalette
         $g = $rgb[1];
         $b = $rgb[2];
 
+        $this->profiler['difference_checks'] = 0;
+        $this->profiler['difference']        .= '--';
+
         foreach ($colors_to_check as $color) {
             // We can validate with $r on its own since all channels were modified with the same variance
+            $difference = abs($r - $color[0]);
+            $this->profiler['difference'] .= $difference . ',';
+
             // Colors will be much closer the lower you go
-            if (abs( $r - $color[0]) < $this->options['proximity_tolerance'] ) {
+            if ($difference < $this->options['proximity_tolerance'] ) {
                 $proximity = true;
             }
         }
+
+        $this->profiler['proximity_value'] = $proximity ? 'true' : 'false';
 
         return $proximity;
     }
@@ -128,10 +145,12 @@ class ColorPalette
     {
 
         $variance = rand(0, $this->options['variance']);
+        $this->profiler['variance_value'] = $variance;
 
         // Switch operator on the variance
         if ($this->options['avoid_proximity']) {
             $this->modifier++;
+            $this->profiler['modifier_value'] = $this->modifier;
             $variance = $variance * ( ( $this->modifier % 2 ) ? 1 : -1 );
         }
 
@@ -156,7 +175,12 @@ class ColorPalette
             $counter    = 0;
             $max_checks = $this->options['proximity_max_checks'];
 
+            $this->profiler['proximity_checks'] = 0;
+            $this->profiler['difference']       = '';
+
             while ($max_checks > $counter) {
+
+                $this->profiler['proximity_checks']++;
 
                 $rgb = $this->generate_colors();
 
