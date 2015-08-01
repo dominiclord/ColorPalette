@@ -16,12 +16,10 @@ class ColorPalette
     private $options;
 
     public $profiler = [
-        'difference'        => 0,
-        'difference_checks' => 0,
+        'difference'        => '',
+        'color_checks'      => 0,
         'proximity_checks'  => 0,
-        'proximity_value'   => 0,
-        'modifier_value'    => 0,
-        'variance_value'    => 0
+        'proximity_value'   => 0
     ];
 
     /**
@@ -31,7 +29,6 @@ class ColorPalette
     */
     public function __construct($color, $options = [])
     {
-
         // Default options
         $this->options = [
             'avoid_proximity'      => true,
@@ -112,16 +109,16 @@ class ColorPalette
         $proximity = false;
 
         // We only check the most recently generated colors as a catalogue could get quite large
-        $colors_to_check = array_slice($this->catalogue, $this->options['proximity_history']);
+        $colors_to_check = array_slice($this->catalogue, ((int)$this->options['proximity_history'] * -1));
 
         $r = $rgb[0];
         $g = $rgb[1];
         $b = $rgb[2];
 
-        $this->profiler['difference_checks'] = 0;
-        $this->profiler['difference']        .= '--';
-
         foreach ($colors_to_check as $color) {
+
+            $this->profiler['color_checks']++;
+
             // We can validate with $r on its own since all channels were modified with the same variance
             $difference = abs($r - $color[0]);
             $this->profiler['difference'] .= $difference . ',';
@@ -131,6 +128,8 @@ class ColorPalette
                 $proximity = true;
             }
         }
+
+        $this->profiler['difference'] .= '--';
 
         $this->profiler['proximity_value'] = $proximity ? 'true' : 'false';
 
@@ -143,14 +142,11 @@ class ColorPalette
     */
     private function generate_colors()
     {
-
         $variance = rand(0, $this->options['variance']);
-        $this->profiler['variance_value'] = $variance;
 
         // Switch operator on the variance
         if ($this->options['avoid_proximity']) {
             $this->modifier++;
-            $this->profiler['modifier_value'] = $this->modifier;
             $variance = $variance * ( ( $this->modifier % 2 ) ? 1 : -1 );
         }
 
@@ -176,13 +172,14 @@ class ColorPalette
             $max_checks = $this->options['proximity_max_checks'];
 
             $this->profiler['proximity_checks'] = 0;
-            $this->profiler['difference']       = '';
+            $this->profiler['color_checks'] = 0;
+            $this->profiler['difference'] = '';
 
             while ($max_checks > $counter) {
 
-                $this->profiler['proximity_checks']++;
-
                 $rgb = $this->generate_colors();
+
+                $this->profiler['proximity_checks']++;
 
                 if (!$this->check_proximity($rgb)) {
                     break;
