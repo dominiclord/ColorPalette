@@ -43,7 +43,7 @@ class ColorPalette
         ];
 
         if (is_array($options) && !empty($options)) {
-            $this->options = array_merge_recursive($this->options, $options);
+            $this->options = array_replace_recursive($this->options, $options);
         }
 
         // Check what type of color we're working with
