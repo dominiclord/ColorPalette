@@ -31,11 +31,9 @@ for ( $i = 0; $i < 10; $i++) {
 ?>
             <li class="color-block" style="background-color: <?php echo $color ?>">
                 Proximity checks : <?php echo $color_generator->profiler['proximity_checks'] ?><br>
-                Proximity value : <?php echo $color_generator->profiler['proximity_value'] ?><br>
-                Difference checks : <?php echo $color_generator->profiler['difference_checks'] ?><br>
+                Color checks : <?php echo $color_generator->profiler['color_checks'] ?><br>
                 Difference : <?php echo $color_generator->profiler['difference'] ?><br>
-                Modifier : <?php echo $color_generator->profiler['modifier_value'] ?><br>
-                Variance value : <?php echo $color_generator->profiler['variance_value'] ?><br>
+                Proximity value : <?php echo $color_generator->profiler['proximity_value'] ?><br>
             </li>
 <?php
 
